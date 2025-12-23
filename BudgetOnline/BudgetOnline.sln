@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E2F6A338-DAE5-4928-B9D2-49D1483CCEF3}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetOnline.Api", "BudgetOnline.Api\BudgetOnline.Api.csproj", "{71767F97-9A23-44A5-8549-2DF08D2BCAB6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetOnline.Application", "BudgetOnline.Application\BudgetOnline.Application.csproj", "{8F38F329-7A51-43BB-ACD6-F1D7F4AEE14A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetOnline.Domain", "BudgetOnline.Domain\BudgetOnline.Domain.csproj", "{E61C7F5B-E281-42DE-A273-030F1043A3E4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetOnline.Infrastructure", "BudgetOnline.Infrastructure\BudgetOnline.Infrastructure.csproj", "{2235754F-7EC0-4127-A754-ED62FD48DF25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BudgetOnline.Tests", "BudgetOnline.Tests\BudgetOnline.Tests.csproj", "{EC6AC877-CB80-4601-8EDC-367AB2E627D5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71767F97-9A23-44A5-8549-2DF08D2BCAB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71767F97-9A23-44A5-8549-2DF08D2BCAB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71767F97-9A23-44A5-8549-2DF08D2BCAB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71767F97-9A23-44A5-8549-2DF08D2BCAB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F38F329-7A51-43BB-ACD6-F1D7F4AEE14A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F38F329-7A51-43BB-ACD6-F1D7F4AEE14A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F38F329-7A51-43BB-ACD6-F1D7F4AEE14A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F38F329-7A51-43BB-ACD6-F1D7F4AEE14A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E61C7F5B-E281-42DE-A273-030F1043A3E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E61C7F5B-E281-42DE-A273-030F1043A3E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E61C7F5B-E281-42DE-A273-030F1043A3E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E61C7F5B-E281-42DE-A273-030F1043A3E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2235754F-7EC0-4127-A754-ED62FD48DF25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2235754F-7EC0-4127-A754-ED62FD48DF25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2235754F-7EC0-4127-A754-ED62FD48DF25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2235754F-7EC0-4127-A754-ED62FD48DF25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC6AC877-CB80-4601-8EDC-367AB2E627D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC6AC877-CB80-4601-8EDC-367AB2E627D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC6AC877-CB80-4601-8EDC-367AB2E627D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC6AC877-CB80-4601-8EDC-367AB2E627D5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8F228CC1-219B-48E7-91E9-D93BE5425875}
+	EndGlobalSection
+EndGlobal
