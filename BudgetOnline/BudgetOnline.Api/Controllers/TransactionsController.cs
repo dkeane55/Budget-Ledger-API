@@ -8,18 +8,13 @@ namespace BudgetOnline.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TransactionsController : ControllerBase    
+public class TransactionsController(ApplicationDbContext context) : ControllerBase    
 {
-    private readonly ApplicationDbContext _context;
-
-    public TransactionsController(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    //private readonly ApplicationDbContext _context = context;
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions() {
-        var transactions = await _context.Transactions.ToListAsync();
+        var transactions = await context.Transactions.ToListAsync();
 
         var response = transactions.Select(t => new TransactionResponse(
             t.Id,
@@ -41,8 +36,8 @@ public class TransactionsController : ControllerBase
             request.Date,
             Guid.Empty
         );
-        _context.Transactions.Add(transaction);
-        await _context.SaveChangesAsync();
+        context.Transactions.Add(transaction);
+        await context.SaveChangesAsync();
 
         var response = new TransactionResponse(
             transaction.Id,
