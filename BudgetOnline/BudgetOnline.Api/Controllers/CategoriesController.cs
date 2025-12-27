@@ -1,11 +1,13 @@
 ﻿using BudgetOnline.Api.Contracts;
 using BudgetOnline.Domain.Entities;
 using BudgetOnline.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetOnline.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class CategoriesController(ApplicationDbContext context) : ControllerBase
