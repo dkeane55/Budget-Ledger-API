@@ -9,7 +9,17 @@ public class Transaction
     public Guid CategoryId { get; private set; }
     public Category Category { get; private set; } = null!;
     private Transaction() { }
+    public void UpdateDetails(string description, decimal amount, DateTime date, Guid categoryId)
+    {
+        if (amount <= 0) throw new ArgumentException("Amount must be positive");
+        if (string.IsNullOrWhiteSpace(description)) throw new ArgumentException("Description required");
+        if (categoryId == Guid.Empty) throw new ArgumentException("Valid Category required");
 
+        Description = description;
+        Amount = amount;
+        Date = date;
+        CategoryId = categoryId;
+    }
     public Transaction(Guid id, decimal amount, string description, DateTime date, Guid categoryId)
     {
         if(amount <= 0)

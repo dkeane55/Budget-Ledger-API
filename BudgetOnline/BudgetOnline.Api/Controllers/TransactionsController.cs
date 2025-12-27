@@ -10,12 +10,11 @@ namespace BudgetOnline.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TransactionsController(ApplicationDbContext context) : ControllerBase    
+public class TransactionsController(ApplicationDbContext context) : ControllerBase
 {
-    //private readonly ApplicationDbContext _context = context;
-
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions() {
+    public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
+    {
         var transactions = await context.Transactions.ToListAsync();
 
         var response = transactions.Select(t => new TransactionResponse(
@@ -56,5 +55,45 @@ public class TransactionsController(ApplicationDbContext context) : ControllerBa
         );
 
         return CreatedAtAction(nameof(GetTransactions), new { id = transaction.Id }, response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTransaction(Guid id)
+    {
+        var transaction = await context.Transactions.FindAsync(id);
+        if (transaction == null)
+        {
+            return NotFound();
+        }
+
+        context.Transactions.Remove(transaction);
+        await context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateTransaction(Guid id, UpdateTransactionRequest request)
+    {
+        var transaction = await context.Transactions.FindAsync(id);
+        if (transaction == null)
+        {
+            return NotFound();
+        }
+        var categoryExists = await context.Categories.AnyAsync(c => c.Id == transaction.CategoryId);
+        if (!categoryExists)
+        {
+            return BadRequest("Category Id doesn't exist");
+        }
+
+        transaction.UpdateDetails(
+            request.Description,
+            request.Amount,
+            request.Date,
+            request.CategoryId
+        );
+
+        await context.SaveChangesAsync();
+        return NoContent();
     }
 }
