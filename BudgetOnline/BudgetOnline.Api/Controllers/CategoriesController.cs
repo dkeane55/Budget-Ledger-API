@@ -27,11 +27,42 @@ public class CategoriesController(ApplicationDbContext context) : ControllerBase
         var category = new Category
         (
             Guid.NewGuid(),
-            request.Name
+            request.Name,
+            request.Budget
         );
         context.Categories.Add(category);
         await context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetCategories), new { id = category.Id }, category);
     }
+
+    [HttpGet("summary")]
+    public async Task<ActionResult<IEnumerable<CategorySummaryResponse>>> GetCategoryBudgetSummary()
+    {
+        var now = DateTime.UtcNow;
+        var start = new DateTime(now.Year, now.Month, 1);
+        var end = start.AddMonths(1).AddTicks(-1);
+
+        var summary = await context.Categories
+        .Select(c => new
+        {
+            c.Id,
+            c.Name,
+            c.Budget,
+            TotalSpent = (decimal)(context.Transactions
+                .Where(t => t.CategoryId == c.Id && t.Date >= start && t.Date < end)
+                .Sum(t => (double?)t.Amount) ?? 0)
+        })
+        .ToListAsync();
+
+        var response = summary.Select(s => new CategorySummaryResponse(
+            s.Id,
+            s.Name,
+            s.Budget,
+            s.TotalSpent,
+            s.Budget - s.TotalSpent
+        ));
+
+        return Ok(response);
+    }   
 }

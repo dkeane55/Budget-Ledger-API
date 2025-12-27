@@ -28,8 +28,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         var rentId = Guid.NewGuid();
 
         modelBuilder.Entity<Category>().HasData(
-            new Category(foodId, "Food"),
-            new Category(rentId, "Rent")
+            new Category(foodId, "Food", 100),
+            new Category(rentId, "Rent", 500)
         );
     }
 }
