@@ -9,6 +9,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddApplicationInsightsTelemetry(options =>
+    {
+        options.ConnectionString = builder.Configuration["ApplicationInsights:InstrumentationKey"];
+    });
+}
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Logging.AddApplicationInsights();
+}
+
 builder.Services.AddSwaggerGen(c =>
 {
     var securityScheme = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
