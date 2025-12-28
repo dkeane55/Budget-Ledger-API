@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BudgetOnline.Api.Contracts;
+namespace BudgetOnline.Application.Contracts;
 
 public record CreateCategoryRequest(
    

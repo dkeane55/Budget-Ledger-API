@@ -1,4 +1,4 @@
-﻿namespace BudgetOnline.Api.Contracts;
+﻿namespace BudgetOnline.Application.Contracts;
 
 public record ErrorResponse(
     int StatusCode,

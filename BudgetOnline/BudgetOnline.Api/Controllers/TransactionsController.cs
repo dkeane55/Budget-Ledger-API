@@ -1,103 +1,67 @@
-﻿using BudgetOnline.Api.Contracts;
-using BudgetOnline.Domain.Entities;
-using BudgetOnline.Infrastructure.Data;
+﻿using BudgetOnline.Application.Contracts;
+using BudgetOnline.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BudgetOnline.Api.Controllers;
 
 [Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class TransactionsController(ApplicationDbContext context) : ControllerBase
+public class TransactionsController : ControllerBase
 {
+    private readonly ITransactionService _transactionService;
+    public TransactionsController(ITransactionService transactionService)
+    {
+        _transactionService = transactionService;
+    }
     [HttpGet]
     public async Task<ActionResult<IEnumerable<TransactionResponse>>> GetTransactions()
     {
-        var transactions = await context.Transactions.Include(t => t.Category).ToListAsync();
-
-        var response = transactions.Select(t => new TransactionResponse(
-            t.Id,
-            t.Amount,
-            t.Description,
-            t.Date,
-            t.Category.Name
-        ));
+        var response = await _transactionService.GetAllTransactionsAsync();
         return Ok(response);
     }
 
     [HttpPost]
-    public async Task<ActionResult<TransactionResponse>> CreateTransaction(CreateTransactionRequest request)
+    public async Task<ActionResult<TransactionResponse>> CreateTransaction(CreateTransactionRequest request, CancellationToken ct)
     {
-        var categoryExists = await context.Categories.AnyAsync(c => c.Id == request.CategoryId);
+        var response = await _transactionService.CreateTransactionAsync(request, ct);
 
-        if (!categoryExists)
+        if (response == null)
         {
             return BadRequest("Category Id does not exist");
         }
 
-        var transaction = new Transaction
-        (
-            Guid.NewGuid(),
-            request.Amount,
-            request.Description,
-            request.Date,
-            request.CategoryId
-        );
-        context.Transactions.Add(transaction);
-        await context.SaveChangesAsync();
-
-        var category = await context.Categories.FindAsync(request.CategoryId);
-
-        var response = new TransactionResponse(
-            transaction.Id,
-            transaction.Amount,
-            transaction.Description,
-            transaction.Date,
-            category?.Name ?? "Unknown Category"
-        );
-
-        return CreatedAtAction(nameof(GetTransactions), new { id = transaction.Id }, response);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTransaction(Guid id)
-    {
-        var transaction = await context.Transactions.FindAsync(id);
-        if (transaction == null)
-        {
-            return NotFound();
-        }
-
-        context.Transactions.Remove(transaction);
-        await context.SaveChangesAsync();
-
-        return NoContent();
+        return CreatedAtAction(nameof(GetTransactions), new { id = response.Id }, response);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateTransaction(Guid id, UpdateTransactionRequest request)
+    public async Task<ActionResult> UpdateTransaction(Guid id, UpdateTransactionRequest request, CancellationToken ct)
     {
-        var transaction = await context.Transactions.FindAsync(id);
-        if (transaction == null)
+        try
+        {
+            var transactionSuccess = await _transactionService.UpdateTransactionAsync(id, request, ct);
+            if (!transactionSuccess)
+            {
+                return NotFound();
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTransaction(Guid id, CancellationToken ct)
+    {
+        var transactionSuccess = await _transactionService.DeleteTransactionAsync(id, ct);
+        if (!transactionSuccess)
         {
             return NotFound();
         }
-        var categoryExists = await context.Categories.AnyAsync(c => c.Id == transaction.CategoryId);
-        if (!categoryExists)
-        {
-            return BadRequest("Category Id doesn't exist");
-        }
 
-        transaction.UpdateDetails(
-            request.Description,
-            request.Amount,
-            request.Date,
-            request.CategoryId
-        );
-
-        await context.SaveChangesAsync();
         return NoContent();
     }
 }

@@ -1,4 +1,7 @@
 using BudgetOnline.Api.Middleware;
+using BudgetOnline.Application.Abstractions;
+using BudgetOnline.Application.Interfaces;
+using BudgetOnline.Application.Services;
 using BudgetOnline.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,8 +62,11 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddAuthentication()
     .AddJwtBearer(); // dotnet user-jwts create --project BudgetOnline.Api
-builder.Services.AddAuthorization();
 
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IApplicationDbContext>(provider =>
+    provider.GetRequiredService<ApplicationDbContext>());
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
