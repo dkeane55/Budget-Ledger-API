@@ -4,6 +4,7 @@ using BudgetOnline.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace BudgetOnline.Api.Controllers;
 
@@ -13,15 +14,17 @@ namespace BudgetOnline.Api.Controllers;
 public class CategoriesController(ApplicationDbContext context) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+    public async Task<ActionResult<IEnumerable<CategoryResponse>>> GetCategories()
     {
-        var categories = await context.Categories.ToListAsync();
+        var categories = await context.Categories
+            .Select(c => new CategoryResponse(c.Id, c.Name))
+            .ToListAsync();
 
         return Ok(categories);
     }
 
     [HttpPost]  
-    public async Task<ActionResult<Category>> CreateCategory(CreateCategoryRequest request)
+    public async Task<ActionResult<CategoryResponse>> CreateCategory(CreateCategoryRequest request)
     {
         var exists = await context.Categories.AnyAsync(c => c.Name.ToLower() == request.Name.ToLower());
         if (exists) return BadRequest("A category with this name already exists");
@@ -35,7 +38,9 @@ public class CategoriesController(ApplicationDbContext context) : ControllerBase
         context.Categories.Add(category);
         await context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetCategories), new { id = category.Id }, category);
+        var response = new CategoryResponse(category.Id, category.Name);
+
+        return CreatedAtAction(nameof(GetCategories), new { id = category.Id }, response);
     }
 
     [HttpGet("summary")]

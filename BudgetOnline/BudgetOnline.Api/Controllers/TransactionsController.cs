@@ -13,21 +13,22 @@ namespace BudgetOnline.Api.Controllers;
 public class TransactionsController(ApplicationDbContext context) : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Transaction>>> GetTransactions()
+    public async Task<ActionResult<IEnumerable<TransactionResponse>>> GetTransactions()
     {
-        var transactions = await context.Transactions.ToListAsync();
+        var transactions = await context.Transactions.Include(t => t.Category).ToListAsync();
 
         var response = transactions.Select(t => new TransactionResponse(
             t.Id,
             t.Amount,
             t.Description,
-            t.Date
+            t.Date,
+            t.Category.Name
         ));
         return Ok(response);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Transaction>> CreateTransaction(CreateTransactionRequest request)
+    public async Task<ActionResult<TransactionResponse>> CreateTransaction(CreateTransactionRequest request)
     {
         var categoryExists = await context.Categories.AnyAsync(c => c.Id == request.CategoryId);
 
@@ -47,11 +48,14 @@ public class TransactionsController(ApplicationDbContext context) : ControllerBa
         context.Transactions.Add(transaction);
         await context.SaveChangesAsync();
 
+        var category = await context.Categories.FindAsync(request.CategoryId);
+
         var response = new TransactionResponse(
             transaction.Id,
             transaction.Amount,
             transaction.Description,
-            transaction.Date
+            transaction.Date,
+            category?.Name ?? "Unknown Category"
         );
 
         return CreatedAtAction(nameof(GetTransactions), new { id = transaction.Id }, response);
